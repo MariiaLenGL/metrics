@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+#-----------------------------------
+#Created by Mariia Len
+#email: mariia.len@globallogic.com
+#-----------------------------------
+
+set -e
+source conf/metrics.conf
+
+mem() {
+    for i in {0..9}
+    do
+        declare memArray
+        memArray[i]=$(grep -m 1 ${MEM[i]} /proc/meminfo | awk '{print $2}')
+            if [[ $1 = mB ]]; then
+                let "memArray[i] /= "1024""
+                echo -e "${YELLOW} ${MEM[i]} ${memArray[i]} mB${RESTORE}"
+            else
+                echo -e "${YELLOW} ${MEM[i]} ${memArray[i]} kB${RESTORE}"
+            fi
+    done
+    separator
+}
+
+cpu() {
+    for i in {2..11}
+    do
+        echo -e ""${YELLOW}" "${NAMES[i]}" "${STAT[i]}" % "${RESTORE}""
+    done
+    separator
+}
+
+separator() {
+    echo -e "${YELLOW}--------------------------------------------------------------------------${RESTORE}"
+}
+
+message() {
+    separator
+    echo -e "${CYAN}Hi, $USERNAME! The $1 usage of host $HOST_NAME for $CUR_DATE is:${RESTORE}"
+    separator
+}
+
+helpmessage() {
+separator
+echo -e "${CYAN}Hi, $USERNAME!
+This is a small utility to display CPU and memory usage.\n${RESTORE}
+Without parameters it displays CPU and memory usage.
+${BLUE}mem${RESTORE} - Displays memory usage.
+${BLUE}cpu${RESTORE} - Displays CPU usage.
+${BLUE}-m or m${RESTORE} - Displays memory usage in megaBytes.
+${BLUE}mc or memcpu${RESTORE} - Displays memory and CPU usage.
+${BLUE}-h or --help${RESTORE} - Displays this message and exits.\n
+${CYAN}Have a nice time!${RESTORE}"
+separator
+}
+
+if [[ ! $1 ]]; then
+message "memory and CPU"
+echo -e "${BLUE}Memory usage:${RESTORE}"
+mem
+echo -e "${BLUE}CPU usage:${RESTORE}"
+cpu
+fi
+
+while [[ -n $1 ]]
+do
+case $1 in
+-m | m) message memory
+mem mB
+shift ;;
+mem) message memory
+mem
+shift ;;
+cpu) message CPU
+cpu
+shift ;;
+mc | memcpu) message "memory and CPU"
+echo -e "${BLUE}Memory usage:${RESTORE}"
+mem
+echo -e "${BLUE}CPU usage:${RESTORE}"
+cpu
+shift ;;
+-h | --help) helpmessage
+shift ;;
+*) echo -e "Please, enter 'metrics cpu' for CPU info or 'metrics mem' for memory info. You may use 'metrics' command without parameters.\nTry 'metrics --help' for more options."
+shift ;;
+esac
+done
