@@ -37,12 +37,12 @@ separator() {
 
 message() {
     separator
-    echo -e "${CYAN}Hi, $USERNAME! The $1 usage of host $HOST_NAME for $CUR_DATE is:${RESTORE}"
+    	echo -e "${CYAN}Hi, $USERNAME! The $1 usage of host $HOST_NAME for $CUR_DATE is:${RESTORE}"
     separator
 }
 
 helpmessage() {
-separator
+    separator
 echo -e "${CYAN}Hi, $USERNAME!
 This is a small utility to display CPU and memory usage.\n${RESTORE}
 Without parameters it displays CPU and memory usage.
@@ -52,38 +52,50 @@ ${BLUE}-m or m${RESTORE} - Displays memory usage in megaBytes.
 ${BLUE}mc or memcpu${RESTORE} - Displays memory and CPU usage.
 ${BLUE}-h or --help${RESTORE} - Displays this message and exits.\n
 ${CYAN}Have a nice time!${RESTORE}"
-separator
+    separator
 }
 
 if [[ ! $1 ]]; then
-message "memory and CPU"
-echo -e "${BLUE}Memory usage:${RESTORE}"
-mem
-echo -e "${BLUE}CPU usage:${RESTORE}"
-cpu
+    message "memory and CPU"
+    echo -e "${BLUE}Memory usage:${RESTORE}"
+    mem
+    echo -e "${BLUE}CPU usage:${RESTORE}"
+    cpu
 fi
 
 while [[ -n $1 ]]
-do
-case $1 in
--m | m) message memory
-mem mB
-shift ;;
-mem) message memory
-mem
-shift ;;
-cpu) message CPU
-cpu
-shift ;;
-mc | memcpu) message "memory and CPU"
-echo -e "${BLUE}Memory usage:${RESTORE}"
-mem
-echo -e "${BLUE}CPU usage:${RESTORE}"
-cpu
-shift ;;
--h | --help) helpmessage
-shift ;;
-*) echo -e "Please, enter 'metrics cpu' for CPU info or 'metrics mem' for memory info. You may use 'metrics' command without parameters.\nTry 'metrics --help' for more options."
-shift ;;
-esac
-done
+    do
+        case $1 in
+        -m | m) 
+	    message memory
+            mem mB
+            shift
+	    ;;
+        mem)
+	    message memory
+            mem
+	    shift
+	    ;;
+        cpu)
+	    message CPU
+	    cpu
+	    shift
+	    ;;
+        mc | memcpu)
+	    message "memory and CPU"
+		echo -e "${BLUE}Memory usage:${RESTORE}"
+	    mem
+		echo -e "${BLUE}CPU usage:${RESTORE}"
+	    cpu
+	    shift
+	    ;;
+	-h | --help)
+	    helpmessage
+	    shift
+	    ;;
+	*)
+	    echo -e "Please, enter 'metrics cpu' for CPU info or 'metrics mem' for memory info. You may use 'metrics' command without parameters.\nTry 'metrics --help' for more options."
+	    shift
+	    ;;
+	esac
+    done
